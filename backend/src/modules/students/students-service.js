@@ -1,5 +1,5 @@
 const { ApiError, sendAccountVerificationEmail } = require("../../utils");
-const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent } = require("./students-repository");
+const { findAllStudents, findStudentDetail, findStudentToSetStatus, addOrUpdateStudent, deleteStudentById } = require("./students-repository");
 const { findUserById } = require("../../shared/repository");
 
 const checkStudentId = async (id) => {
@@ -32,21 +32,29 @@ const getStudentDetail = async (id) => {
 const addNewStudent = async (payload) => {
     const ADD_STUDENT_AND_EMAIL_SEND_SUCCESS = "Student added and verification email sent successfully.";
     const ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL = "Student added, but failed to send verification email.";
-    try {
-        const result = await addOrUpdateStudent(payload);
-        if (!result.status) {
-            throw new ApiError(500, result.message);
-        }
+    const EMAIL_ALREADY_EXISTS = "Email already exists";
 
-        try {
-            await sendAccountVerificationEmail({ userId: result.userId, userEmail: payload.email });
-            return { message: ADD_STUDENT_AND_EMAIL_SEND_SUCCESS };
-        } catch (error) {
-            return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
-        }
-    } catch (error) {
-        throw new ApiError(500, "Unable to add student");
+    const result = await addOrUpdateStudent(payload);
+    if (!result.status) {
+        const status = result.message === EMAIL_ALREADY_EXISTS ? 409 : 500;
+        throw new ApiError(status, result.message);
     }
+
+    try {
+        await sendAccountVerificationEmail({ userId: result.userId, userEmail: payload.email });
+        return { message: ADD_STUDENT_AND_EMAIL_SEND_SUCCESS };
+    } catch (error) {
+        return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
+    }
+}
+
+const deleteStudent = async (id) => {
+    const result = await deleteStudentById(id);
+    if (!result.status) {
+        throw new ApiError(result.code, result.message);
+    }
+
+    return { message: "Student deleted successfully" };
 }
 
 const updateStudent = async (payload) => {
@@ -75,4 +83,5 @@ module.exports = {
     addNewStudent,
     setStudentStatus,
     updateStudent,
+    deleteStudent,
 };

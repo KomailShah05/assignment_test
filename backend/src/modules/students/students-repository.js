@@ -1,4 +1,5 @@
 const { processDBRequest } = require("../../utils");
+const { db } = require("../../config");
 
 const getRoleId = async (roleName) => {
     const query = "SELECT id FROM roles WHERE name ILIKE $1";
@@ -111,11 +112,58 @@ const findStudentToUpdate = async (paylaod) => {
     return rows;
 }
 
+
+const deleteStudentById = async (id) => {
+    const client = await db.connect();
+    try {
+        await client.query("BEGIN");
+
+        const { rows } = await client.query(
+            "SELECT id FROM users WHERE id = $1 AND role_id = 3",
+            [id]
+        );
+        if (!rows[0]) {
+            await client.query("ROLLBACK");
+            return { status: false, code: 404, message: "Student not found" };
+        }
+
+        // users has no ON DELETE CASCADE, so the student's own dependent
+        // rows have to go first, and references to them as a reviewer cleared.
+        await client.query("DELETE FROM user_refresh_tokens WHERE user_id = $1", [id]);
+        await client.query("DELETE FROM user_leave_policy WHERE user_id = $1", [id]);
+        await client.query("DELETE FROM user_leaves WHERE user_id = $1", [id]);
+        await client.query("DELETE FROM user_profiles WHERE user_id = $1", [id]);
+        await client.query(
+            "UPDATE users SET status_last_reviewer_id = NULL WHERE status_last_reviewer_id = $1",
+            [id]
+        );
+        await client.query("DELETE FROM users WHERE id = $1", [id]);
+
+        await client.query("COMMIT");
+        return { status: true };
+    } catch (error) {
+        await client.query("ROLLBACK");
+        // 23503 = foreign_key_violation: the student is still referenced
+        // somewhere we do not remove (e.g. notices they authored).
+        if (error.code === "23503") {
+            return {
+                status: false,
+                code: 409,
+                message: "Student has related records and cannot be deleted. Disable system access instead.",
+            };
+        }
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 module.exports = {
     getRoleId,
     findAllStudents,
     addOrUpdateStudent,
     findStudentDetail,
     findStudentToSetStatus,
-    findStudentToUpdate
+    findStudentToUpdate,
+    deleteStudentById
 };
