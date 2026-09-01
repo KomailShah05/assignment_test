@@ -1,25 +1,26 @@
 const validateRequest = (schema) => (req, res, next) => {
-    try {
-        schema.parse({
-            body: req.body,
-            query: req.query,
-            params: req.params
-        });
+  try {
+    console.log("Validating request with schema:", schema);
+    schema.parse({
+      body: req.body,
+      query: req.query,
+      params: req.params,
+    });
 
-        next();
-    } catch (error) {
-        const formattedErrors = error.errors.map((err) => ({
-            path: err.path.join('.'),
-            message: err.message,
-        }));
+    next();
+  } catch (error) {
+    const formattedErrors = error.errors.map((err) => ({
+      path: err.path.join("."),
+      message: err.message,
+    }));
 
-        return res.status(400).json({
-            error: "Validation error",
-            detail: formattedErrors
-        });
-    }
-}
+    return res.status(400).json({
+      error: "Validation error",
+      detail: formattedErrors,
+    });
+  }
+};
 
 module.exports = {
-    validateRequest
+  validateRequest,
 };

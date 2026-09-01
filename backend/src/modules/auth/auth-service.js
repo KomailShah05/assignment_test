@@ -34,6 +34,7 @@ const EMAIL_NOT_VERIFIED =
 const USER_ALREADY_ACTIVE = "User already in active status. Please login.";
 const UNABLE_TO_VERIFY_EMAIL = "Unable to verify email";
 const login = async (username, passwordFromUser) => {
+  console.log("[auth-service] login called:", { username });
   const client = await db.connect();
   try {
     await client.query("BEGIN");
@@ -63,12 +64,12 @@ const login = async (username, passwordFromUser) => {
     const accessToken = generateToken(
       { id: userId, role: roleName, roleId: role_id, csrf_hmac: csrfHmacHash },
       env.JWT_ACCESS_TOKEN_SECRET,
-      env.JWT_ACCESS_TOKEN_TIME_IN_MS
+      env.JWT_ACCESS_TOKEN_TIME_IN_MS,
     );
     const refreshToken = generateToken(
       { id: userId, role: roleName, roleId: role_id },
       env.JWT_REFRESH_TOKEN_SECRET,
-      env.JWT_REFRESH_TOKEN_TIME_IN_MS
+      env.JWT_REFRESH_TOKEN_TIME_IN_MS,
     );
 
     await deleteOldRefreshTokenByUserId(userId, client);
@@ -90,8 +91,11 @@ const login = async (username, passwordFromUser) => {
       apis,
     };
 
+    console.log("[auth-service] login succeeded:", { username, userId });
+
     return { accessToken, refreshToken, csrfToken, accountBasic };
   } catch (error) {
+    console.log("[auth-service] login failed:", { username, error });
     await client.query("ROLLBACK");
     throw error;
   } finally {
@@ -114,7 +118,7 @@ const getNewAccessAndCsrfToken = async (refreshToken) => {
 
     const decodedToken = verifyToken(
       refreshToken,
-      env.JWT_REFRESH_TOKEN_SECRET
+      env.JWT_REFRESH_TOKEN_SECRET,
     );
     if (!decodedToken || !decodedToken.id) {
       throw new ApiError(401, "Invalid refresh token");
@@ -136,7 +140,7 @@ const getNewAccessAndCsrfToken = async (refreshToken) => {
     const accessToken = generateToken(
       { id: userId, role: roleName, roleId: role_id, csrf_hmac: csrfHmacHash },
       env.JWT_ACCESS_TOKEN_SECRET,
-      env.JWT_ACCESS_TOKEN_TIME_IN_MS
+      env.JWT_ACCESS_TOKEN_TIME_IN_MS,
     );
 
     await client.query("COMMIT");
@@ -220,7 +224,7 @@ const processResendEmailVerification = async (userId) => {
     if (is_email_verified) {
       throw new ApiError(
         400,
-        "Email already verified. Please setup your account password using the link sent in the email."
+        "Email already verified. Please setup your account password using the link sent in the email.",
       );
     }
 

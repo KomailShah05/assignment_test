@@ -19,7 +19,8 @@ const baseQuery = fetchBaseQuery({
 
     return headers;
   },
-  credentials: 'include'
+  credentials: 'include',
+  timeout: 10000
 });
 
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
@@ -42,6 +43,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
+
   tagTypes: Object.values(Tag),
   endpoints: () => ({})
 });
