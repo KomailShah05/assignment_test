@@ -1,266 +1,115 @@
-# Student Management System - Developer Skill Test
+# Student Management System
 
-A comprehensive full-stack web application for managing school operations including students, staff, classes, notices, and leave management. This project serves as a skill assessment platform for **Frontend**, **Backend**, and **Blockchain** developers.
+Full-stack school management app — React + TypeScript on the front, Node/Express +
+PostgreSQL behind it, with a Solidity certificate registry added for Problem 3.
 
-## 🏗️ Project Architecture
+This README covers Problems 1–3. The original skill-test brief (including Problems 4
+and 5, which weren't attempted) is in git history at commit `c50d743`.
 
-```
-skill-test/
-├── frontend/           # React + TypeScript + Material-UI
-├── backend/            # Node.js + Express + PostgreSQL
-├── go-service/         # Golang microservice for PDF reports
-├── seed_db/           # Database schema and seed data
-└── README.md          # This file
-```
+## Setup
 
-## 🚀 Quick Start
+Database:
 
-### Prerequisites
-- Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
-
-### 1. Backend Setup
 ```bash
-cd backend
-npm install
-cp .env.example .env  # Configure your environment variables
-npm start
-```
-
-### 2. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### 3. Access the Application
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5007
-- **Demo Credentials**: 
-  - Email: `admin@school-admin.com`
-  - Password: `3OU4zn3q6Zh9`
-
-### ** Database Setup **
-```bash
-# Create PostgreSQL database
 createdb school_mgmt
-
-# Run database migrations
 psql -d school_mgmt -f seed_db/tables.sql
 psql -d school_mgmt -f seed_db/seed-db.sql
 ```
 
-## 🎯 Skill Test Problems
+Backend and frontend, in separate terminals:
 
-### **Problem 1: Frontend Developer Challenge**
-**Fix "Add New Notice" Page**
-- **Location**: `/app/notices/add`
-- **Issue**: When clicking the 'Save' button, the 'description' field doesn't get saved
-- **Skills Tested**: React, Form handling, State management, API integration
-- **Expected Fix**: Ensure description field is properly bound and submitted
-
-### **Problem 2: Backend Developer Challenge**
-**Complete CRUD Operations in Student Management**
-- **Location**: `/src/modules/students/students-controller.js`
-- **Issue**: Implement missing CRUD operations for student management
-- **Skills Tested**: Node.js, Express, PostgreSQL, API design, Error handling
-- **Expected Implementation**: Full Create, Read, Update, Delete operations
-
-### **Problem 3: Blockchain Developer Challenge**
-**Implement Certificate Verification System**
-- **Objective**: Add blockchain-based certificate verification for student achievements
-- **Skills Tested**: Smart contracts, Web3 integration, Ethereum/Polygon
-- **Requirements**:
-  - Create smart contract for certificate issuance and verification
-  - Integrate Web3 wallet connection in frontend
-  - Add certificate management in admin panel
-  - Implement IPFS for certificate metadata storage
-
-### **Problem 4: Golang Developer Challenge**
-**Build PDF Report Generation Microservice via API Integration**
-- **Objective**: Create a standalone microservice in Go to generate PDF reports for students by consuming the existing Node.js backend API.
-- **Location**: A new `go-service/` directory at the root of the project.
-- **Description**: This service will connect to the existing Node.js backend's `/api/v1/students/:id` endpoint to fetch student data, and then use the returned JSON to generate a downloadable PDF report.
-- **Skills Tested**: Golang, REST API consumption, JSON parsing, file generation, microservice integration.
-- **Requirements**:
-  - Create a new endpoint `GET /api/v1/students/:id/report` in the Go service.
-  - The Go service must not connect directly to the database; it must fetch data from the Node.js API.
-  - The developer **must** have the PostgreSQL database and the Node.js backend running to complete this task.
-
-### **Problem 5: DevOps Engineer Challenge**
-**Containerize the Full Application Stack**
-- **Objective**: Create a multi-container setup to run the entire application stack (Frontend, Backend, Database) using Docker and Docker Compose.
-- **Location**: `Dockerfile` in the `frontend` and `backend` directories, and a `docker-compose.yml` file at the project root.
-- **Description**: The goal is to make the entire development environment reproducible and easy to launch with a single command. The candidate must ensure all services can communicate with each other inside the Docker network.
-- **Skills Tested**: Docker, Docker Compose, container networking, database seeding in a container, environment variable management.
-- **Requirements**:
-  - Write a `Dockerfile` for the `frontend` service.
-  - Write a `Dockerfile` for the `backend` service.
-  - Create a `docker-compose.yml` at the root to define and link the `frontend`, `backend`, and `postgres` services.
-  - The `postgres` service must be automatically seeded with the data from the `seed_db/` directory on its first run.
-  - The entire application should be launchable with `docker-compose up`.
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **Framework**: React 18 + TypeScript
-- **UI Library**: Material-UI (MUI) v6
-- **State Management**: Redux Toolkit + RTK Query
-- **Form Handling**: React Hook Form + Zod validation
-- **Build Tool**: Vite
-- **Code Quality**: ESLint, Prettier, Husky
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: PostgreSQL
-- **Authentication**: JWT + CSRF protection
-- **Password Hashing**: Argon2
-- **Email Service**: Resend API
-- **Validation**: Zod
-
-### Database
-- **Primary DB**: PostgreSQL
-- **Schema**: Comprehensive school management schema
-- **Features**: Role-based access control, Leave management, Notice system
-
-## 📋 Features
-
-### Core Functionality
-- **Dashboard**: User statistics, notices, birthday celebrations, leave requests
-- **User Management**: Multi-role system (Admin, Student, Teacher, Custom roles)
-- **Academic Management**: Classes, sections, students, class teachers
-- **Leave Management**: Policy definition, request submission, approval workflow
-- **Notice System**: Create, approve, and distribute notices
-- **Staff Management**: Employee profiles, departments, role assignments
-- **Access Control**: Granular permissions system
-
-### Security Features
-- JWT-based authentication with refresh tokens
-- CSRF protection
-- Role-based access control (RBAC)
-- Password reset and email verification
-- Secure cookie handling
-
-## 🔧 Development Guidelines
-
-### Code Standards
-- **File Naming**: kebab-case for consistency across OS
-- **Import Style**: Absolute imports for cleaner code
-- **Code Formatting**: Prettier with consistent configuration
-- **Git Hooks**: Husky for pre-commit quality checks
-
-### Project Structure
-```
-frontend/src/
-├── api/           # API configuration and base setup
-├── assets/        # Static assets (images, styles)
-├── components/    # Shared/reusable components
-├── domains/       # Feature-based modules
-│   ├── auth/      # Authentication module
-│   ├── students/  # Student management
-│   ├── notices/   # Notice system
-│   └── ...
-├── hooks/         # Custom React hooks
-├── routes/        # Application routing
-├── store/         # Redux store configuration
-├── theme/         # MUI theme customization
-└── utils/         # Utility functions
+```bash
+cd backend  && npm install && npm start   # http://localhost:5007
+cd frontend && npm install && npm run dev # http://localhost:5173
 ```
 
+Log in with `admin@school-admin.com` / `3OU4zn3q6Zh9`.
+
+Two notes if something looks off. `backend/.env` points `DATABASE_URL` at the
+Postgres role that owns the database — change it if yours differs. And the API runs
+on 5007 rather than 5000, because macOS ControlCenter squats on 5000.
+
+## Problem 1 — Notice description not saving
+
+Branch: [`feature/fix-notice-description`](../../compare/main...feature/fix-notice-description)
+
+The Description input was registered as `content` while everything else in the stack
+— Zod schema, types, edit page, repository, and the `NOT NULL` database column — used
+`description`. The value went into an unknown field and was dropped before the request
+was sent. Whitespace-only descriptions also passed validation, so `.trim()` was added.
+
+The same form component is shared with Edit Notice, so that page was broken too and is
+fixed by the same change.
+
+To review: go to `/app/notices/add`, create a notice with a description, and open it
+from the list. Then edit it and save again. Try submitting only spaces — it should be
+rejected.
+
+## Problem 2 — Student CRUD
+
+Branch: [`feature/student-crud`](../../compare/main...feature/student-crud)
+
+All five handlers in `students-controller.js` were empty, so every `/students` route
+returned 200 with no body. The service and repository layers were already there, so
+this is mostly wiring, plus a `DELETE` endpoint that didn't exist anywhere.
+
+Delete is guarded to students only, so the route can't remove an admin, and it runs in
+a transaction — `users` has no `ON DELETE CASCADE`, so dependent rows go first. If the
+student is still referenced by something we deliberately keep, like a notice they
+authored, it returns 409 and rolls back rather than half-deleting them. Duplicate email
+on create now returns 409 with the real reason instead of a generic 500.
+
+To review, from the UI: Students → Add Student, then edit, toggle system access, and
+delete. Or directly:
+
+```bash
+# log in and keep the cookies
+curl -c cookies.txt -X POST http://localhost:5007/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin@school-admin.com","password":"3OU4zn3q6Zh9"}'
+
+curl -b cookies.txt http://localhost:5007/api/v1/students
+curl -b cookies.txt -X DELETE http://localhost:5007/api/v1/students/9999  # 404
 ```
-backend/src/
-├── config/        # Database and app configuration
-├── middlewares/   # Express middlewares
-├── modules/       # Feature-based API modules
-│   ├── auth/      # Authentication endpoints
-│   ├── students/  # Student CRUD operations
-│   ├── notices/   # Notice management
-│   └── ...
-├── routes/        # API route definitions
-├── shared/        # Shared utilities and repositories
-├── templates/     # Email templates
-└── utils/         # Helper functions
+
+Adding a student needs at least one class and section to exist — `seed_db/` doesn't
+create any, and `user_profiles.class_name` is a foreign key.
+
+## Problem 3 — Certificate verification
+
+Branch: [`feature/certificate-verification`](../../compare/main...feature/certificate-verification)
+
+A Solidity registry stores certificate issuance and revocation on-chain; the full
+metadata document lives off-chain and only its IPFS CID is committed. Verification
+reads straight from the contract, so it doesn't depend on the application database and
+doesn't need a wallet.
+
+```bash
+cd blockchain && npm install
+npm test              # 15 tests
+npm run node          # terminal 1 — local chain on 127.0.0.1:8545
+npm run deploy:local  # terminal 2
+psql -d school_mgmt -f seed_db/certificate-access-controls.sql
 ```
 
-## 🧪 Testing Instructions
+Deploying writes the address and ABI into the frontend, so there's nothing to copy by
+hand. Point MetaMask at `http://127.0.0.1:8545` (chain id `31337`) and import one of
+the private keys Hardhat prints — the deploying account is the owner and first issuer.
 
-### For Frontend Developers
-1. Navigate to the notices section
-2. Try to create a new notice with description
-3. Verify the description is saved correctly
-4. Test form validation and error handling
+Then visit `/app/certificates/issue`, connect the wallet, and issue one. The list page
+lets you revoke it; `/app/certificates/verify` takes the certificate id and reports
+whether it's valid. A revoked certificate still reads back, but reports invalid.
 
-### For Backend Developers
-1. Test all student CRUD endpoints using Postman/curl
-2. Verify proper error handling and validation
-3. Check database constraints and relationships
-4. Test authentication and authorization
+Certificate ids are `keccak256(studentId, course, issuedAt)`, so a verifier can
+recompute one from the printed certificate rather than trusting an id they were given.
 
-### For Blockchain Developers
-1. Set up local blockchain environment (Hardhat/Ganache)
-2. Deploy certificate smart contract
-3. Integrate Web3 wallet connection
-4. Test certificate issuance and verification flow
+On IPFS: with no credentials configured, metadata is content-addressed locally and the
+CID is still a real CIDv1 matching `ipfs add --cid-version=1 --raw-leaves` — it just
+isn't announced to the network. Set `VITE_PINATA_JWT` to pin for real; no code change.
 
-### For Golang Developers
-1. Set up the PostgreSQL database using `seed_db/` files.
-2. Set up and run the Node.js backend by following its setup instructions.
-3. Run the Go service.
-4. Use a tool like `curl` or Postman to make a GET request to the Go service's `/api/v1/students/:id/report` endpoint.
-5. Verify that the Go service correctly calls the Node.js backend and that a PDF file is successfully generated.
-6. Check the contents of the PDF for correctness.
+More detail in [`blockchain/README.md`](blockchain/README.md).
 
-### For DevOps Engineers
-1. Ensure Docker and Docker Compose are installed on your machine.
-2. From the project root, run the command `docker-compose up --build`.
-3. Wait for all services to build and start.
-4. Access the frontend at `http://localhost:5173` and verify the application is running.
-5. Log in with the demo credentials to confirm that the frontend, backend, and database are all communicating correctly.
+## Reviewing the branches
 
-## 📚 API Documentation
-
-### Authentication Endpoints
-- `POST /api/v1/auth/login` - User login
-- `POST /api/v1/auth/logout` - User logout
-- `GET /api/v1/auth/refresh` - Refresh access token
-
-### Student Management
-- `GET /api/v1/students` - List all students
-- `POST /api/v1/students` - Create new student
-- `PUT /api/v1/students/:id` - Update student
-- `DELETE /api/v1/students/:id` - Delete student
-
-### Notice Management
-- `GET /api/v1/notices` - List notices
-- `POST /api/v1/notices` - Create notice
-- `PUT /api/v1/notices/:id` - Update notice
-- `DELETE /api/v1/notices/:id` - Delete notice
-
-### PDF Generation Service (Go)
-- `GET /api/v1/students/:id/report` - Generate and download a PDF report for a specific student.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For questions and support:
-- Create an issue in the repository
-- Check existing documentation in `/frontend/README.md` and `/backend/README.md`
-- Review the database schema in `/seed_db/tables.sql`
-
----
-
-**Happy Coding! 🚀**
+Problem 1 is worth merging first — `npm run build` runs `tsc` before Vite, and until
+that fix lands the notice type error fails the build on the other branches.
