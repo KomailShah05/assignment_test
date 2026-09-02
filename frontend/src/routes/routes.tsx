@@ -25,6 +25,11 @@ import { EditDepartmentPage, ListDepartmentsPage } from '@/domains/department/pa
 import { ErrorPage, NotFound } from '@/components/errors';
 import { MainLayout } from '@/components/layout';
 import { RoleAndPermission } from '@/domains/role-and-permission/pages';
+import {
+  IssueCertificate,
+  ListCertificates,
+  VerifyCertificate
+} from '@/domains/certificate/pages';
 
 export const routes = [
   {
@@ -78,6 +83,9 @@ export const routes = [
       { path: 'staffs/add', element: <AddStaff /> },
       { path: 'staffs/:id', element: <ViewStaff /> },
       { path: 'staffs/edit/:id', element: <EditStaff /> },
+      { path: 'certificates', element: <ListCertificates /> },
+      { path: 'certificates/issue', element: <IssueCertificate /> },
+      { path: 'certificates/verify', element: <VerifyCertificate /> },
       { path: 'roles-and-permissions', element: <RoleAndPermission /> },
       { path: 'departments', element: <ListDepartmentsPage /> },
       { path: 'departments/edit/:id', element: <EditDepartmentPage /> },
